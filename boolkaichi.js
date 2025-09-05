@@ -108,4 +108,22 @@ function weaponChoice(warriors, weapons) {
 
 const equippedWarriors = weaponChoice(warriors, weapons);
 
-console.log(equippedWarriors);
+// console.log(equippedWarriors);
+
+function trainingSession(warriors) {
+  return warriors.map((w) => {
+    const afterTraining =
+      (w.defense + w.strength) * Math.floor(Math.random() * (100 - 1) + 1);
+    return { ...w, afterTraining };
+  });
+}
+
+const trainedWarriors = trainingSession(equippedWarriors);
+// console.log(trainedWarriors);
+
+function selectionSession(warriors) {
+  return warriors.filter((w) => w.afterTraining > 2000);
+}
+
+const selectedWarriors = selectionSession(trainedWarriors);
+console.log(selectedWarriors);
