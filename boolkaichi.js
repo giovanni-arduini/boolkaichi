@@ -175,19 +175,59 @@ function shuffleArray(array) {
 const selectedWarriors = shuffleArray([...selectionSession(trainedWarriors)]);
 console.log(selectedWarriors);
 
+const winners = [...selectedWarriors];
+const podium = [];
+
 function fightingRound(warriors) {
-  const winners = [];
+  const winnersRound = [];
   for (let i = 0; i < warriors.length; i += 2) {
     let warrior1 = warriors[i];
     let warrior2 = warriors[i + 1];
-
+    console.log("Si scontrano", warrior1.name, "e", warrior2.name);
     if (warrior1.afterTraining > warrior2.afterTraining) {
-      winners.push(warrior1);
+      winnersRound.push(warrior1);
+      console.log("\n---> Il vincitore è ", warrior1.name);
+      console.log("\n            ");
     } else {
-      winners.push(warrior2);
+      winnersRound.push(warrior2);
+      console.log("\n---> Il vincitore è ", warrior2.name);
+      console.log("\n            ");
     }
   }
-  return winners;
+  return winnersRound;
 }
 
-console.log(fightingRound(selectedWarriors));
+console.log(fightingRound(winners));
+
+let round = [...selectedWarriors];
+let roundNumber = 1;
+let lastFour = [];
+let lastTwo = [];
+while (round.length > 1) {
+  console.log(`\n--- 💥 ROUND ${roundNumber} ---`);
+  if (round.length === 4) {
+    lastFour = [...round];
+  }
+  if (round.length === 2) {
+    lastTwo = [...round];
+  }
+  round = fightingRound(round);
+  roundNumber++;
+}
+
+let second = null;
+let third = null;
+if (lastTwo.length === 2) {
+  // Il secondo è chi ha perso la finale
+  second = lastTwo.find((w) => w !== round[0]);
+}
+if (lastFour.length === 4) {
+  // Trova chi ha perso in semifinale
+  const semifinalLosers = lastFour.filter((w) => !lastTwo.includes(w));
+  // Il terzo è chi tra i due ha il punteggio afterTraining più alto
+  third = semifinalLosers.sort((a, b) => b.afterTraining - a.afterTraining)[0];
+}
+
+console.log("\n🥇 Campione:", round[0]);
+if (second) console.log("🥈 Secondo:", second);
+if (third) console.log("🥉 Terzo:", third);
