@@ -94,6 +94,7 @@ const weapons = [
   { id: 50, name: "Honjo Masamed Shield", strength: 8, defense: 17 },
 ];
 
+// scelta dell'arma casuale
 function weaponChoice(warriors, weapons) {
   let allWeapons = weapons;
 
@@ -110,6 +111,7 @@ const equippedWarriors = weaponChoice(warriors, weapons);
 
 // console.log(equippedWarriors);
 
+// Sessione di allenamento
 function trainingSession(warriors) {
   return warriors.map((w) => {
     const afterTraining =
@@ -121,6 +123,7 @@ function trainingSession(warriors) {
 const trainedWarriors = trainingSession(equippedWarriors);
 // console.log(trainedWarriors);
 
+// selezione post allenamento: solo potenze di 2, max 32 guerrieri, aggiunta Lu Bu se necessario
 function selectionSession(warriors) {
   const bigBoss = {
     id: 100,
@@ -128,11 +131,63 @@ function selectionSession(warriors) {
     strength: 100,
     defense: 80,
     weapon: { id: 100, name: "Susanoo", strength: 20, defense: 20 },
-    afterTraining: 12000,
+    afterTraining: 14000,
   };
-  const selection = warriors.filter((w) => w.afterTraining > 2000);
-  return selection.length % 2 === 0 ? selection : { ...selection, bigBoss };
+  // Guerrieri sopra soglia
+  let filtered = warriors.filter((w) => w.afterTraining > 2000);
+  // Ordina per afterTraining decrescente
+  let sorted = [...filtered].sort((a, b) => b.afterTraining - a.afterTraining);
+  // Se meno di 16, prendi i migliori 15 e aggiungi Lu Bu
+  if (sorted.length < 16) {
+    sorted = [
+      ...[...warriors]
+        .sort((a, b) => b.afterTraining - a.afterTraining)
+        .slice(0, 15),
+      bigBoss,
+    ];
+    return sorted;
+  }
+  // Se tra 16 e 31, prendi i migliori (se dispari aggiungi Lu Bu per arrivare a potenza di 2)
+  if (sorted.length < 32) {
+    let n = sorted.length;
+    // Trova la potenza di 2 più vicina >= n
+    let nextPower = 16;
+    while (nextPower < n) nextPower *= 2;
+    let result = sorted.slice(0, nextPower - (n === nextPower ? 0 : 1));
+    if (result.length % 2 !== 0 || result.length < nextPower) {
+      result.push(bigBoss);
+    }
+    return result;
+  }
+  // Se almeno 32, prendi i migliori 32
+  return sorted.slice(0, 32);
 }
 
-const selectedWarriors = selectionSession(trainedWarriors);
+// ordinamento casuale dei partecipanti
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const selectedWarriors = shuffleArray([...selectionSession(trainedWarriors)]);
 console.log(selectedWarriors);
+
+function fightingRound(warriors) {
+  const winners = [];
+  for (let i = 0; i < warriors.length; i += 2) {
+    let warrior1 = warriors[i];
+    let warrior2 = warriors[i + 1];
+
+    if (warrior1.afterTraining > warrior2.afterTraining) {
+      winners.push(warrior1);
+    } else {
+      winners.push(warrior2);
+    }
+  }
+  return winners;
+}
+
+console.log(fightingRound(selectedWarriors));
