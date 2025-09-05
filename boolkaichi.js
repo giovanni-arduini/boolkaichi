@@ -122,7 +122,16 @@ const trainedWarriors = trainingSession(equippedWarriors);
 // console.log(trainedWarriors);
 
 function selectionSession(warriors) {
-  return warriors.filter((w) => w.afterTraining > 2000);
+  const bigBoss = {
+    id: 100,
+    name: "Lu Bu",
+    strength: 100,
+    defense: 80,
+    weapon: { id: 100, name: "Susanoo", strength: 20, defense: 20 },
+    afterTraining: 12000,
+  };
+  const selection = warriors.filter((w) => w.afterTraining > 2000);
+  return selection.length % 2 === 0 ? selection : { ...selection, bigBoss };
 }
 
 const selectedWarriors = selectionSession(trainedWarriors);
