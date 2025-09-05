@@ -93,3 +93,19 @@ const weapons = [
   { id: 49, name: "Mikazuki Crescent", strength: 18, defense: 11 },
   { id: 50, name: "Honjo Masamed Shield", strength: 8, defense: 17 },
 ];
+
+function weaponChoice(warriors, weapons) {
+  let allWeapons = weapons;
+
+  return warriors.map((w) => {
+    const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
+    allWeapons.filter((weapon) => weapon.id !== randomWeapon.id);
+    const defense = w.defense + randomWeapon.defense;
+    const strength = w.strength + randomWeapon.strength;
+    return (w = { ...w, defense, strength, randomWeapon });
+  });
+}
+
+const equippedWarriors = weaponChoice(warriors, weapons);
+
+console.log(equippedWarriors);
